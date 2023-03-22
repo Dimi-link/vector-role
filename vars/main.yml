@@ -1,0 +1,3 @@
+---
+# vars file for vector
+vector_config_dir: "/etc/vector"
