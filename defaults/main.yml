@@ -1,30 +1,20 @@
 ---
 # defaults file for vector
 vector_version: "0.28.1-1"
-vector_config:
-  sources:
-    dummy_logs:
+api_enabled: false
+listen_address: 127.0.0.1:8686
+sources:
+  - name: dummy_logs
+    config:
       type: demo_logs
       format: syslog
       interval: 1
-  transforms:
-    parse_logs:
+sinks:
+  - name: my_sink_id
+    config:
+      type: console
       inputs:
       - dummy_logs
-      source: |-
-        . = parse_syslog!(string!(.message))
-        .timestamp = to_string(.timestamp)
-        .timestamp = slice!(.timestamp, start:0, end: -1)
-      type: remap
-  sinks:
-    to_clickhouse:
-      type: clickhouse
-      inputs:
-        - parse_logs
-      database: logtest
-      endpoint: 'http://51.250.93.252:8123'
-      table: mylogs
-      compression: gzip
-  api:
-    enabled: true
-    address: '0.0.0.0:8686'
+      target: stdout
+      encoding:
+        codec: json
