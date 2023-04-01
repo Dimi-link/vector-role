@@ -1,22 +1,53 @@
-Role Name
+vector-role
 =========
 
-A brief description of the role goes here.
+A role for vector installation and configuration
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Not defined
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
-
+vector configuration path
+```bash
+vector_config_dir: "/etc/vector"
+```
+enable or disable vector API status
+```bash
+api_enabled: false
+```
+vector API listen address binding
+```bash
+listen_address: 127.0.0.1:8686
+```
+vector sources
+```bash
+sources:
+  - name: dummy_logs
+    config:
+      type: demo_logs
+      format: syslog
+      interval: 1
+```
+vector sinks
+```bash
+sinks:
+  - name: my_sink_id
+    config:
+      type: console
+      inputs:
+      - dummy_logs
+      target: stdout
+      encoding:
+        codec: json
+```
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+Not required
 
 Example Playbook
 ----------------
@@ -24,15 +55,29 @@ Example Playbook
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
     - hosts: servers
+      pre_tasks:
       roles:
-         - { role: username.rolename, x: 42 }
+        - role: vector-role
+          vars:
+            api_enabled: true
+            listen_address: 127.0.0.1:8686
+            sources:
+              - name: dummy_logs
+                config:
+                  type: demo_logs
+                  format: syslog
+                  interval: 1
+            sinks:
+              - name: my_sink_id
+                config:
+                  type: console
+                  inputs:
+                  - dummy_logs
+                  target: stdout
+                  encoding:
+                    codec: json
 
 License
 -------
 
 BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
